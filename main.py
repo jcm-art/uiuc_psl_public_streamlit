@@ -67,15 +67,20 @@ class MovieRecommender():
         self.genre_list = list(self.sys_I_recommendation_dict.keys())
         
     def _load_precomputed_recommendation_dict(self):
+        # Load JSON file from github URL
+        cached_results_url = 'https://github.com/jcm-art/uiuc_psl_public_streamlit/blob/main/app/src/resources/system_1_rec_dict.json'
+        resp = requests.get(url)
+        recommendation_dict = json.loads(resp.text)
+
         # Confirm cached data is present
-        cached_results_filepath = "src/resources/system_1_rec_dict.json"
-        print(f"Verifying system 1 cached results exist: {os.path.isfile(cached_results_filepath)}")
+        #cached_results_filepath = "src/resources/system_1_rec_dict.json"
+        #print(f"Verifying system 1 cached results exist: {os.path.isfile(cached_results_filepath)}")
 
         # Load JSON file
-        with open(cached_results_filepath, 'r') as json_file:
-            recommendation_dict = json.load(json_file)
+        # with open(cached_results_filepath, 'r') as json_file:
+        #    recommendation_dict = json.load(json_file)
 
-        print(recommendation_dict)
+        #print(recommendation_dict)
 
         return recommendation_dict
     
@@ -88,30 +93,6 @@ class MovieRecommender():
     def get_system_II_recommendation_list(self, movie_list, user_ratings):
         system_II_recommendations = ["TBD, Not Yet implemented" for _ in range(0, 10)]
         return system_II_recommendations
-
-
-
-# Function to load all test and train datasets
-def _load_data(self, directory_root: str="./app/src/data/"):
-    directory_path = pathlib.Path(directory_root)
-    movie_filename = directory_path / "movies.dat"
-    ratings_filename = directory_path / "ratings.dat"
-    users_filename = directory_path / "users.dat"
-
-    # Create a DataFrame from the three datasets
-    movies_df = pd.read_csv(
-        movie_filename, index_col=False, header=None, sep='::', names=['movie_id', 'title', 'genre'], encoding='latin-1'
-    )
-    ratings_df = pd.read_csv(
-        ratings_filename, index_col=False, header=None, sep='::',names=['user_id', 'movie_id', 'rating', 'timestamp']
-    )
-    users_df = pd.read_csv(
-        users_filename, index_col=False, header=None, sep='::',names=['user_id', 'gender', 'age', 'occupation','zipcode']
-    )
-
-    # Return dataframes
-    return movies_df, ratings_df, users_df
-
 
 def main():
     current_page = MovieRecommendationPage()
