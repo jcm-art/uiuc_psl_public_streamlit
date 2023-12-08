@@ -37,16 +37,61 @@ class MovieRecommendationPage():
         st.subheader("Rate the following movies to get a recommendation")
 
         # TODO - replace movie list with real movies
-        movie_list = ["fake movie 1", "fake movie 2", "fake movie 3", "fake movie 4", "fake movie 5"]
-        user_ratings = [3 for _ in movie_list]
+        movie_list = [
+            "fake movie 1", "fake movie 2", "fake movie 3", "fake movie 4", "fake movie 5", 
+            "fake movie 6", "fake movie 7", "fake movie 8", "fake movie 9", "fake movie 10", 
+            "fake movie 11"]
+        self.user_ratings = []
+        self.not_seen = []
 
-        for i, movie_name in enumerate(movie_list):
-            user_ratings[i] = st.slider(f"{movie_name}", min_value=1, max_value=5, value=3, step=1)
+        # Make grid of movies for ratings
+        self.make_movie_grid(movie_list)
 
-
+        print(self.user_ratings)
+        print(self.not_seen)
         st.subheader(f"Top 10 Movies Recommended for you")
-        for i, movie_title in enumerate(self.movie_recommender.get_system_II_recommendation_list(movie_list, user_ratings)):
+        for i, movie_title in enumerate(self.movie_recommender.get_system_II_recommendation_list(movie_list, self.user_ratings)):
             st.write(f"{i+1}) {movie_title}")
+
+
+    def make_movie_grid(self, movie_list):
+
+        # Define the number of columns in the grid
+        num_columns = 5
+
+        # Calculate the number of rows based on the number of movies and columns
+        num_rows = len(movie_list) // num_columns + (len(movie_list) % num_columns > 0)
+
+        # Create a grid layout using Streamlit's columns
+        for i in range(num_rows):
+            column_list = st.columns(num_columns)
+
+            for j in range(num_columns):
+                movie_index = i * num_columns + j
+                
+                if movie_index < len(movie_list):
+
+                    # Write inside each column
+                    with column_list[j]:
+                        self.write_single_movie(movie_list, movie_index)
+
+    def write_single_movie(self, movie_list, movie_index):
+        # Write movie title
+        movie_title = movie_list[movie_index]
+        st.write(f"{movie_title}")
+
+        # Image URL for demonstration purposes, replace it with actual image URLs
+        image_url = "https://upload.wikimedia.org/wikipedia/en/thumb/e/e7/Video-x-generic.svg/240px-Video-x-generic.svg.png"
+        st.image(image_url, caption=f"Poster {movie_index}", use_column_width=True)
+
+        # Rating slider
+        self.user_ratings.append(st.slider(f"Slider {movie_index}", min_value=1, max_value=5, value=3, step=1))
+
+        # Checkbox to mark as not seen
+        self.not_seen.append(st.checkbox(f"Do not rate {movie_index}"))
+
+        # Output spacer for movie grid
+        st.write("------")
 
 
 #@st.cache_resource()
@@ -76,7 +121,7 @@ class MovieRecommender():
         resp = requests.get(url)
         recommendation_dict = json.loads(resp.text)
 
-        print(recommendation_dict)
+        #print(recommendation_dict)
 
         return recommendation_dict
 
@@ -89,7 +134,7 @@ class MovieRecommender():
         with open(cached_results_filepath, 'r') as json_file:
            recommendation_dict = json.load(json_file)
 
-        print(recommendation_dict)
+        #print(recommendation_dict)
 
         return recommendation_dict
     
