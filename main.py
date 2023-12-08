@@ -3,6 +3,7 @@
 import json
 import os
 import pathlib
+import requests
 
 import numpy as np
 import pandas as pd
@@ -61,7 +62,10 @@ class MovieRecommender():
         # Augment data
 
         # Prepopulate System I recommendation dictionary
-        self.sys_I_recommendation_dict = self._load_precomputed_recommendation_dict()
+        try:
+            self.sys_I_recommendation_dict = self._local_load_precomputed_recommendation_dict()
+        except:
+            self.sys_I_recommendation_dict = self._load_precomputed_recommendation_dict()
 
         # Populate Genre List
         self.genre_list = list(self.sys_I_recommendation_dict.keys())
@@ -72,15 +76,20 @@ class MovieRecommender():
         resp = requests.get(url)
         recommendation_dict = json.loads(resp.text)
 
+        print(recommendation_dict)
+
+        return recommendation_dict
+
+    def _local_load_precomputed_recommendation_dict(self):
         # Confirm cached data is present
-        #cached_results_filepath = "src/resources/system_1_rec_dict.json"
-        #print(f"Verifying system 1 cached results exist: {os.path.isfile(cached_results_filepath)}")
+        cached_results_filepath = "src/resources/system_1_rec_dict.json"
+        print(f"Verifying system 1 cached results exist: {os.path.isfile(cached_results_filepath)}")
 
         # Load JSON file
-        # with open(cached_results_filepath, 'r') as json_file:
-        #    recommendation_dict = json.load(json_file)
+        with open(cached_results_filepath, 'r') as json_file:
+           recommendation_dict = json.load(json_file)
 
-        #print(recommendation_dict)
+        print(recommendation_dict)
 
         return recommendation_dict
     
