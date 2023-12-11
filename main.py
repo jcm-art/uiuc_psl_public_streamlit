@@ -112,13 +112,19 @@ class MovieRecommender():
         except:
             self.sys_I_recommendation_dict = self._load_precomputed_recommendation_dict()
 
+        # Prepopulate System II sim matrix
+        try:
+            self.sys_II_sim_matrix = self._local_load_precomputed_sim_matrix()
+        except:
+            self.sys_II_sim_matrix = self._load_precomputed_sim_matrix() 
+
         # Populate Genre List
         self.genre_list = list(self.sys_I_recommendation_dict.keys())
         
     def _load_precomputed_recommendation_dict(self):
         # Load JSON file from github URL
         cached_results_url = 'https://github.com/jcm-art/uiuc_psl_public_streamlit/blob/main/app/src/resources/system_1_rec_dict.json'
-        resp = requests.get(url)
+        resp = requests.get(cached_results_url)
         recommendation_dict = json.loads(resp.text)
 
         #print(recommendation_dict)
@@ -137,6 +143,29 @@ class MovieRecommender():
         #print(recommendation_dict)
 
         return recommendation_dict
+    
+    def _load_precomputed_sim_matrix(self):
+        # Load Matrix file from github URL
+        cached_results_url = 'https://github.com/jcm-art/uiuc_psl_public_streamlit/blob/main/app/src/resources/similarity_matrix.npy'
+        resp = requests.get(cached_results_url)
+        st.write(resp)
+        sim_matrix = np.load(resp.text)
+
+        #print(recommendation_dict)
+
+        return sim_matrix
+
+    def _local_load_precomputed_sim_matrix(self):
+        # Confirm cached data is present
+        cached_results_filepath = "src/resources/similarity_matrix.npy"
+        print(f"Verifying system 2 cached sim matrix results exist: {os.path.isfile(cached_results_filepath)}")
+
+        # Load np matrix
+        sim_matrix = np.load(cached_results_filepath)
+
+        print(sim_matrix)
+
+        return sim_matrix
     
     def get_genre_list(self):
         return self.genre_list
