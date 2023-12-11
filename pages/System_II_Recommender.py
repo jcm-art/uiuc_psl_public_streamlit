@@ -137,7 +137,9 @@ class MovieRecommenderII():
             if user_ratings[i]!=0:
                 user_movie_vector[0, movie_id] = user_ratings[i]
         st.write(user_movie_vector)
-        st.write(f"{np.sum(user_movie_vector)/np.count_nonzero(user_movie_vector)} is your average rating for {np.count_nonzero(user_movie_vector)} movies")
+        total_rated = np.count_nonzero(user_movie_vector)
+        avg_rating = np.sum(user_movie_vector)/np.count_nonzero(user_movie_vector) if total_rated >0 else 0
+        st.write(f"{avg_rating} is your average rating for {total_rated} movies")
 
         system_II_recommendations = ["TBD, Not Yet implemented" for _ in range(0, 10)]
 
